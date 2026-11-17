@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight, ArrowUpRight, Check, Plus, X, Menu, Phone, Mail, MapPin, MessageCircle,
-  ShieldCheck, Truck, Wrench, BadgeCheck, HeartHandshake, Send, ClipboardList, Loader2,
+  ArrowRight, ArrowUpRight, Check, Plus, X, Menu, Phone, Mail, MapPin,   ShieldCheck, Truck, Wrench, BadgeCheck, HeartHandshake, Send, ClipboardList,
 } from "lucide-react";
 import { asset, company, categories, sectors, reasons, values, credentials, steps } from "@/lib/site";
 
@@ -327,45 +326,32 @@ function Credentials() {
   );
 }
 
-const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-
 function Contact({ picked, toggle, clear }: { picked: string[]; toggle: (s: string) => void; clear: () => void }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
-  const [err, setErr] = useState("");
+  const [sent, setSent] = useState<{ mailto: string; gmail: string } | null>(null);
   const [f, setF] = useState({ name: "", org: "", phone: "", email: "", message: "" });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
 
-  const summary = useMemo(
-    () => `Hello Alfatech, I would like a quotation.${picked.length ? `\n\nItems:\n- ${picked.join("\n- ")}` : ""}${f.message ? `\n\nNotes: ${f.message}` : ""}${f.name ? `\n\nFrom: ${f.name}${f.org ? `, ${f.org}` : ""}` : ""}`,
-    [picked, f]
-  );
-
-  async function submit(e: React.FormEvent) {
+  function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!WEB3FORMS_KEY) {
-      setErr("Online form is not yet activated. Please use WhatsApp, call or email us directly.");
-      setStatus("error");
-      return;
-    }
-    setStatus("sending");
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `Quote request from ${f.name} — Alfatech website`,
-          from_name: "Alfatech Website",
-          name: f.name, organisation: f.org, phone: f.phone, email: f.email,
-          items: picked.join(", ") || "None selected", message: f.message,
-        }),
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message || "Failed");
-      setStatus("done"); clear(); setF({ name: "", org: "", phone: "", email: "", message: "" });
-    } catch (x) {
-      setErr(x instanceof Error ? x.message : "Something went wrong."); setStatus("error");
-    }
+    const subject = `Quote request from ${f.name}${f.org ? ` (${f.org})` : ""}`;
+    const body = [
+      "Hello Alfatech Resources Ltd,",
+      "",
+      "I would like a quotation.",
+      "",
+      picked.length ? `Items:\n${picked.map((p) => `- ${p}`).join("\n")}\n` : "",
+      f.message ? `Requirements:\n${f.message}\n` : "",
+      "Contact details",
+      `Name: ${f.name}`,
+      f.org ? `Organisation: ${f.org}` : "",
+      `Phone: ${f.phone}`,
+      `Email: ${f.email}`,
+    ].filter((l, i, a) => l !== "" || a[i - 1] !== "").join("\n");
+    const q = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:${company.email}?${q}`;
+    const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(company.email)}&${q}`;
+    setSent({ mailto, gmail });
+    window.location.href = mailto;
   }
 
   const input = "w-full rounded-xl border border-navy/15 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-azure focus:ring-4 focus:ring-azure/15";
@@ -382,10 +368,6 @@ function Contact({ picked, toggle, clear }: { picked: string[]; toggle: (s: stri
             <li className="flex gap-4"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy text-gold"><Phone size={19} /></span><a href={`tel:${company.phoneTel}`} className="self-center font-semibold text-navy hover:text-azure">{company.phoneDisplay}</a></li>
             <li className="flex gap-4"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy text-gold"><Mail size={19} /></span><a href={`mailto:${company.email}`} className="self-center font-semibold text-navy hover:text-azure">{company.email}</a></li>
           </ul>
-          <a target="_blank" rel="noreferrer" href={`https://wa.me/${company.whatsapp}?text=${encodeURIComponent(summary)}`}
-            className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#1fa855] px-6 py-3.5 font-semibold text-white transition hover:brightness-110">
-            <MessageCircle size={19} /> Chat on WhatsApp {picked.length > 0 && `(${picked.length} item${picked.length > 1 ? "s" : ""})`}
-          </a>
         </motion.div>
 
         <motion.form {...reveal} onSubmit={submit} className="rounded-3xl border border-navy/10 bg-white p-7 shadow-xl shadow-navy/5 sm:p-9">
@@ -407,12 +389,18 @@ function Contact({ picked, toggle, clear }: { picked: string[]; toggle: (s: stri
           <label className="mt-4 block text-sm font-medium text-navy">Requirements & quantities
             <textarea rows={4} className={`${input} mt-1.5 resize-none`} value={f.message} onChange={set("message")} />
           </label>
-          <button disabled={status === "sending"} className="mt-6 inline-flex items-center gap-2 rounded-full bg-navy px-8 py-3.5 font-semibold text-white transition hover:bg-azure disabled:opacity-60">
-            {status === "sending" ? <Loader2 size={18} className="animate-spin" /> : <Send size={17} />} Send request
+          <button className="mt-6 inline-flex items-center gap-2 rounded-full bg-navy px-8 py-3.5 font-semibold text-white transition hover:bg-azure">
+            <Send size={17} /> Send request
           </button>
-          <div aria-live="polite" className="mt-4 text-sm">
-            {status === "done" && <p className="font-medium text-[#14854a]">Thank you — your request has been sent. We’ll be in touch shortly.</p>}
-            {status === "error" && <p className="font-medium text-red-600">{err}</p>}
+          <div aria-live="polite" className="mt-4 text-sm text-navy/70">
+            {sent ? (
+              <p>
+                Your email app should have opened with your request ready to send. Nothing happened?{" "}
+                <a href={sent.gmail} target="_blank" rel="noreferrer" className="font-semibold text-azure underline">Open it in Gmail</a>.
+              </p>
+            ) : (
+              <p className="text-navy/55">Clicking send opens a ready-to-send email to {company.email} in your email app.</p>
+            )}
           </div>
         </motion.form>
       </div>
