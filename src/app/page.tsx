@@ -321,7 +321,7 @@ function Credentials() {
             </motion.div>
           ))}
         </div>
-        <p className="mt-6 text-sm text-navy/55">Registered office: {company.registered}.</p>
+        <p className="mt-6 text-sm text-navy/55">Registered office: {company.address}</p>
       </div>
     </section>
   );
@@ -444,7 +444,7 @@ function Footer() {
         </div>
         <div className="mt-12 flex flex-col justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row">
           <p>© {new Date().getFullYear()} {company.name} · {company.rc}. All rights reserved.</p>
-          <p>Kaduna · Abuja · Nationwide delivery</p>
+          <p>Abuja · Nationwide delivery</p>
         </div>
       </div>
     </footer>

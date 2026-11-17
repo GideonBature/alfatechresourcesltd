@@ -5,12 +5,12 @@ export const company = {
   name: "Alfatech Resources Ltd",
   short: "Alfatech",
   rc: "RC 8899213",
-  address: "No 13 Road G, Dantata Plaza, Behind Murtala Mohammed Square, Independence Way, Kaduna.",
+  address: "Phil Nwachukwu Crescent, Mega Bond Estate, Gwarinpa, FCT, Abuja, Nigeria.",
   registered: "Phil Nwachukwu Crescent, Mega Bond Estate, Gwarinpa, Abuja, FCT",
-  email: "istifamous@gmail.com",
-  phoneDisplay: "0802 364 0122",
-  phoneTel: "+2348023640122",
-  whatsapp: "2348023640122",
+  email: "alfaresourcesltd@gmail.com",
+  phoneDisplay: "+234 802 357 9686",
+  phoneTel: "+2348023579686",
+  whatsapp: "2348023579686",
 };
 
 export type Category = {
