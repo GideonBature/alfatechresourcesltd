@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: `${company.name} | Office, IT & Security Solutions`,
   description:
     "Alfatech Resources Ltd supplies office furniture, stationery, computers, printers, CCTV & security systems, power backup and electronics to government, corporate and institutional clients across Nigeria.",
-  keywords: ["Alfatech Resources", "office supplies Nigeria", "CCTV installation Kaduna", "computers and printers", "stationery supply", "inverters and solar", "general supply Nigeria"],
+  keywords: ["Alfatech Resources", "office supplies Nigeria", "CCTV installation Abuja", "computers and printers", "stationery supply", "inverters and solar", "general supply Nigeria"],
   icons: {
     icon: [
       { url: asset("/favicon.ico"), sizes: "any" },
