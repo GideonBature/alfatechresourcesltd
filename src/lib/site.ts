@@ -142,9 +142,9 @@ export const values = [
 ];
 
 export const credentials = [
-  { k: "CAC", t: "Incorporated", d: "Private company limited by shares, RC 8899213 (October 2025)" },
-  { k: "BPP", t: "Interim Registration", d: "Bureau of Public Procurement IRR, valid to 31 Dec 2026" },
-  { k: "FIRS", t: "Tax Clearance", d: "Tax Clearance Certificate, valid to 31 Dec 2026" },
+  { k: "CAC", t: "Incorporated", d: "RC 8899213 · October 2025" },
+  { k: "BPP", t: "Interim Registration", d: "Bureau of Public Procurement" },
+  { k: "FIRS", t: "Tax Clearance" },
   { k: "NSITF", t: "Compliant", d: "Also compliant with NRS, PENCOM and ITF" },
 ];
 
